@@ -1,0 +1,14 @@
+{
+  "name": "first_react",
+  "version": "1.0.0",
+  "description": "Akshay saini tutorial",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Tarun Rana",
+  "license": "ISC",
+  "devDependencies": {
+    "parcel": "^2.14.4"
+  }
+}

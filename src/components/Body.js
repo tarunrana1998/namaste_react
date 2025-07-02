@@ -1,95 +1,86 @@
 import RestaurantCard from "./RestaurantCard";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 const initialRestaurants = [
-  {
-    name: "Spicy Delight",
-    image: "https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=300&q=80",
-    cuisines: ["Indian", "Chinese"],
-    rating: 4.5,
-    deliveryTime: 30,
-  },
-  {
-    name: "Pasta Palace",
-    image: "https://images.unsplash.com/photo-1601315576607-015906c1a0d9?auto=format&fit=crop&w=300&q=80",
-    cuisines: ["Italian"],
-    rating: 4.2,
-    deliveryTime: 25,
-  },
-  {
-    name: "Sushi Spot",
-    image: "https://images.unsplash.com/photo-1562967916-eb82221dfb36?auto=format&fit=crop&w=300&q=80",
-    cuisines: ["Japanese"],
-    rating: 4.8,
-    deliveryTime: 40,
-  },
-  {
-    name: "Burger House",
-    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=300&q=80",
-    cuisines: ["American", "Fast Food"],
-    rating: 3.1,
-    deliveryTime: 20,
-  },
 ];
 
 const Body = () => {
-    const arr = useState(initialRestaurants);
     console.log("body is renderinh");
-  const [listOfRestaurants, setListOfRestaurants] = arr;
+    const [listOfRestaurants, setListOfRestaurants] = useState([]);
+    const [filteredRestaurant, setFilteredRestaurant] = useState([]);
+    const [searchText, setSearchText] = useState("");
+    useEffect(() => {
 
-  useEffect(() => {
-   
-    fetchRestaurants();
-  }, []);
+        fetchRestaurants();
+    }, []);
 
-  const fetchRestaurants = async  () => {
-      const data = await fetch("https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.971599&lng=77.594566&page_type=DESKTOP_WEB_LISTING");
-      const json = await data.json();
-      console.log("json", json);
+    const fetchRestaurants = async () => {
+        const data = await fetch("https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.971599&lng=77.594566&page_type=DESKTOP_WEB_LISTING");
+        const json = await data.json();
+        console.log("json", json);
+        console.log("json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants", json.data.cards[4].card.card.gridElements.infoWithStyle.restaurants);
+        setListOfRestaurants(json.data.cards[4].card.card.gridElements.infoWithStyle.restaurants);
+        setFilteredRestaurant(
+            json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+        );
+
     };
-  console.log("BOdy is rendered before useEffect");
-  const addRestaurant = () => {
-    console.log("Clicked from body");
+    console.log("BOdy is rendered before useEffect");
 
-    const newRestaurant = {
-      name: "New Restaurant",
-      image: "https://images.unsplash.com/photo-1601315576607-015906c1a0d9?auto=format&fit=crop&w=300&q=80",
-      cuisines: ["New Cuisine"],
-      rating: 4.0,
-      deliveryTime: 30,
+    const topRatedRestaurants = () => {
+        let topRatedRestaurants = listOfRestaurants.filter(restaurant => restaurant.rating >= 4.4);
+        console.log("Top Rated Restaurants:", topRatedRestaurants);
+        setListOfRestaurants(topRatedRestaurants);
     };
 
-    // Use immutable update
-    console.log("listOfRestaurants", listOfRestaurants);
-    setListOfRestaurants([...listOfRestaurants, newRestaurant]);
-    console.log("listOfRestaurants", listOfRestaurants);
-  };
+    return (
+        <main style={{ padding: "10px" }}>
+            <div className="filter">
+                <div className="filter-search">
+                    <input
+                        type="text"
+                        data-testid="searchInput"
+                        className="border border-solid border-black"
+                        value={searchText}
+                        onChange={(e) => {
+                            setSearchText(e.target.value);
+                        }}
+                    />
+                    <button
+                        className="px-4 py-2 bg-green-100 m-4 rounded-lg"
+                        onClick={() => {
+                            // Filter the restraunt cards and update the UI
+                            // searchText
+                            console.log(searchText);
 
-  const topRatedRestaurants = () => {
-    let topRatedRestaurants = listOfRestaurants.filter(restaurant => restaurant.rating >= 4.0);
-    console.log("Top Rated Restaurants:", topRatedRestaurants);
-    setListOfRestaurants(listOfRestaurants => {
-      listOfRestaurants.push(...topRatedRestaurants);
-      return [...listOfRestaurants];
-    });
-  };
+                            const filteredRestaurant = listOfRestaurants.filter((res) =>
+                                res.info.name.toLowerCase().includes(searchText.toLowerCase())
+                            );
 
-  return (
-    <main style={{ padding: "10px" }}>
-      <button
-        style={{ padding: "10px", marginBottom: "20px" }}
-        onClick={topRatedRestaurants}
-      >
-        Click Me
-      </button>
-      <h2>Welcome to the Food App</h2>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
-        {listOfRestaurants.map((restaurant, index) => (
-          <RestaurantCard key={index} {...restaurant} />
-        ))}
-      </div>
-    </main>
-  );
+                            setFilteredRestaurant(filteredRestaurant);
+                        }}
+                    >
+                        Search
+                    </button>
+                </div>
+                <div className="toprated">
+
+                    <button
+                        style={{ padding: "10px", marginBottom: "20px" }}
+                        onClick={topRatedRestaurants}
+                    >
+                        Top rated Restaurant
+                    </button>
+                </div>
+            </div>
+            <h2>Welcome to the Food App</h2>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+                {listOfRestaurants.map((restaurant) => (
+                    <RestaurantCard key={restaurant.info.id} resData={restaurant.info} />
+                ))}
+            </div>
+        </main>
+    );
 };
 
 export default Body;

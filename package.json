@@ -2,18 +2,21 @@
   "name": "first_react",
   "version": "1.0.0",
   "description": "Akshay saini tutorial",
+  "homepage": "swiggy/",
   "scripts": {
     "start": "parcel index.html",
-    "build": "parcel build index.html",
+    "build": "parcel build index.html --public-url /swiggy/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Tarun Rana",
+  "proxy": "https://www.swiggy.com",
   "license": "ISC",
   "devDependencies": {
     "parcel": "^2.14.4"
   },
   "dependencies": {
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^6.22.3"
   }
 }

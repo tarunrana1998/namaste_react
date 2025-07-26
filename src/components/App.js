@@ -4,6 +4,8 @@ import Header from "./Header";
 import Body from "./Body";
 import Footer from "./Footer";
 import Error from "./Error";
+import AboutUsCard from "./AboutUsCard";
+import ContactUsCard from "./ContactUsCard";
 import { createBrowserRouter, RouterProvider , Outlet} from "react-router-dom";
 // import logo from "./logo.png";
 // Header Component
@@ -22,8 +24,8 @@ const appRouter = createBrowserRouter([
     {
         path: '/', element: <AppLayout />, errorElement: <Error />, children: [
             { path: '/', element: <Body /> },
-            { path: '/about', element: <h1>About Us</h1> },
-            { path: '/contact', element: <h1>Contact Us</h1> },
+            { path: '/about', element: <AboutUsCard /> },
+            { path: '/contact', element: <ContactUsCard /> },
             { path: '/cart', element: <h1>Cart</h1> },
             { path: '/restaurant/:id', element: <h1>Restaurant Details</h1> },
         ]

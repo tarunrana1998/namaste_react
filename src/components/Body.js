@@ -1,10 +1,12 @@
 import RestaurantCard from "./RestaurantCard";
+import Menu from "./Menu";
 import { useEffect, useState } from "react";
 
 const Body = () => {
     const [listOfRestaurants, setListOfRestaurants] = useState([]);
     const [filteredRestaurant, setFilteredRestaurant] = useState([]);
     const [searchText, setSearchText] = useState("");
+    const [selectedRestaurantId, setSelectedRestaurantId] = useState(null);
 
     useEffect(() => {
         fetchRestaurants();
@@ -35,18 +37,19 @@ const Body = () => {
     };
 
     return (
-        <main style={{ padding: "10px" }}>
-            <div className="filter">
-                <div className="filter-search">
+        <main className="main-content max-w-6xl mx-auto py-6 sm:py-10 px-2 sm:px-4 animate-fadeIn">
+            <section className="filter flex flex-col sm:flex-row justify-between items-center mb-6 sm:mb-8 gap-4 sm:gap-6">
+                <div className="filter-search flex flex-col sm:flex-row gap-2 sm:gap-4 items-center w-full sm:w-auto animate-fadeInUp">
                     <input
                         type="text"
                         data-testid="searchInput"
-                        className="border border-solid border-black"
+                        className="border border-indigo-400 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-200 rounded-lg px-3 py-2 text-base sm:text-lg shadow-sm transition duration-300 w-full sm:w-64"
                         value={searchText}
                         onChange={(e) => setSearchText(e.target.value)}
+                        placeholder="Search restaurants..."
                     />
                     <button
-                        className="px-4 py-2 bg-green-100 m-4 rounded-lg"
+                        className="btn bg-gradient-to-r from-green-400 to-blue-400 text-white font-bold px-4 sm:px-6 py-2 rounded-lg shadow-lg hover:from-blue-400 hover:to-green-400 transition duration-300 animate-bounce"
                         onClick={() => {
                             const filtered = listOfRestaurants.filter((res) =>
                                 res.info.name.toLowerCase().includes(searchText.toLowerCase())
@@ -57,7 +60,7 @@ const Body = () => {
                         Search
                     </button>
                 </div>
-                <div className="toprated">
+                <div className="toprated animate-fadeInUp">
                     <button
                         style={{ padding: "10px", marginBottom: "20px" }}
                         onClick={topRatedRestaurants}
@@ -65,13 +68,18 @@ const Body = () => {
                         Top rated Restaurant
                     </button>
                 </div>
-            </div>
+            </section>
             <h2>Welcome to the Food App</h2>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+            <div className="flex flex-wrap gap-4 sm:gap-8 justify-center">
                 {filteredRestaurant.map((restaurant) => (
-                    <RestaurantCard key={restaurant.info.id} resData={restaurant.info} />
+                    <div key={restaurant.info.id} onClick={() => setSelectedRestaurantId(restaurant.info.id)} className="cursor-pointer transition-transform hover:scale-105 w-full sm:w-auto">
+                        <RestaurantCard resData={restaurant.info} />
+                    </div>
                 ))}
             </div>
+            {selectedRestaurantId && (
+                <Menu restaurantId={selectedRestaurantId} onClose={() => setSelectedRestaurantId(null)} />
+            )}
         </main>
     );
 };

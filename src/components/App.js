@@ -1,24 +1,35 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
 import Header from "./Header";
 import Body from "./Body";
 import Footer from "./Footer";
 import Error from "./Error";
 import AboutUsCard from "./AboutUsCard";
 import ContactUsCard from "./ContactUsCard";
-import { createBrowserRouter, RouterProvider , Outlet} from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import UserContext from "../utils/UserContext";
+import { useState, useEffect } from "react";
 // import logo from "./logo.png";
 // Header Component
 
 // App Component combining all
-const AppLayout = () => (
-    <div>
-        <Header />
-        <Outlet />
+const AppLayout = () => {
+    const [userName, setUserName] = useState();
 
-        <Footer />
-    </div>
-);
+    useEffect(() => {
+        // Simulate fetching user data
+        const name = "Tarun Rana"; // This could be fetched from an API
+        setUserName(name);
+    }, []);
+
+    return (
+        <UserContext.Provider value={{ userName, setUserName }}>
+            <div>
+                <Header />
+                <Outlet />
+                <Footer />
+            </div>
+        </UserContext.Provider>
+    );
+};
 
 const appRouter = createBrowserRouter([
     {

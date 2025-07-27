@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import RestaurantCategory from "./RestaurantCategory";
 
 const Menu = ({ restaurantId, onClose }) => {
-    const [menu, setMenu] = useState([]);
+    const [categories, setCategories] = useState([]);
     const [restaurantName, setRestaurantName] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -25,19 +26,13 @@ const Menu = ({ restaurantId, onClose }) => {
             items = json?.data?.cards?.find(card => card.card?.card?.itemCards)?.card?.card?.itemCards || [];
             // Path 2 (sometimes menu items are nested deeper)
             if (!items.length) {
-                const regularCards = json?.data?.cards?.find(card => card.groupedCard)?.groupedCard?.cardGroupMap?.REGULAR?.cards || [];
-                for (const card of regularCards) {
-                    if (card.card?.card?.itemCards) {
-                        items = card.card.card.itemCards;
-                        break;
-                    }
-                }
+                const categories = json?.data?.cards?.find(card => card.groupedCard)?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(c=>  c.card?.card?.['@type'].search('ItemCategory') !== -1) || [];
+                console.log("Categories found:", categories);
+                setCategories(categories);
             }
-            setMenu(items);
-            setRestaurantName(json?.data?.cards?.[0]?.card?.card?.info?.name || "");
+            setRestaurantName(json?.data?.cards?.[2]?.card?.card?.info?.name || "");
             if (!items.length) setError("No menu found.");
         } catch (e) {
-            setMenu([]);
             setError("Failed to fetch menu.");
         }
         setLoading(false);
@@ -49,7 +44,12 @@ const Menu = ({ restaurantId, onClose }) => {
             <button onClick={onClose} className="absolute top-2 right-2 sm:top-4 sm:right-4 text-indigo-500 hover:text-red-500 text-2xl font-bold transition duration-300">×</button>
             <h2 className="text-xl sm:text-2xl font-bold text-indigo-600 mb-4 text-center">{restaurantName} Menu</h2>
             {loading && <div className="text-center py-8 animate-pulse">Loading menu...</div>}
-            {error && !loading && <div className="text-center py-8 text-red-500">{error}</div>}
+            {categories.map((category, index) => (
+                <RestaurantCategory key={index} title={category.card.card.title} items={category.card.card.itemCards}    />
+
+            ))}
+
+            {/* {error && !loading && <div className="text-center py-8 text-red-500">{error}</div>}
             {!loading && !error && menu.length > 0 && (
                 <ul className="divide-y divide-indigo-100 w-full">
                     {menu.map(item => (
@@ -59,7 +59,7 @@ const Menu = ({ restaurantId, onClose }) => {
                         </li>
                     ))}
                 </ul>
-            )}
+            )} */}
         </section>
     );
 };

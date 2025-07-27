@@ -1,12 +1,14 @@
 import RestaurantCard from "./RestaurantCard";
 import Menu from "./Menu";
-import { useEffect, useState } from "react";
+import { useEffect, useState , useContext } from "react";
 
 const Body = () => {
     const [listOfRestaurants, setListOfRestaurants] = useState([]);
     const [filteredRestaurant, setFilteredRestaurant] = useState([]);
     const [searchText, setSearchText] = useState("");
     const [selectedRestaurantId, setSelectedRestaurantId] = useState(null);
+
+    const { setUserName } = useContext(UserContext); // ✅ Valid now
 
     useEffect(() => {
         fetchRestaurants();
@@ -49,7 +51,7 @@ const Body = () => {
                         placeholder="Search restaurants..."
                     />
                     <button
-                        className="btn bg-gradient-to-r from-green-400 to-blue-400 text-white font-bold px-4 sm:px-6 py-2 rounded-lg shadow-lg hover:from-blue-400 hover:to-green-400 transition duration-300 animate-bounce"
+                        className="btn bg-gradient-to-r from-green-400 to-blue-400 text-white font-bold px-4 sm:px-6 py-2 rounded-lg shadow-lg hover:from-blue-400 hover:to-green-400"
                         onClick={() => {
                             const filtered = listOfRestaurants.filter((res) =>
                                 res.info.name.toLowerCase().includes(searchText.toLowerCase())
@@ -59,6 +61,18 @@ const Body = () => {
                     >
                         Search
                     </button>
+                    <label className="text-gray-700 font-semibold">
+                        Change User:
+                    </label>
+                    <input
+                        type="text"
+                        data-testid="changeUser"
+                        className="border border-indigo-400 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-200 rounded-lg px-3 py-2 text-base sm:text-lg shadow-sm transition duration-300 w-full sm:w-64"
+                        value=''
+                        // onChange={(e) => setSearchText(e.target.value)}
+                        placeholder="Change Username"
+                    />
+
                 </div>
                 <div className="toprated animate-fadeInUp">
                     <button
@@ -71,7 +85,7 @@ const Body = () => {
             </section>
             <h2>Welcome to the Food App</h2>
             <div className="flex flex-wrap gap-4 sm:gap-8 justify-center">
-                {filteredRestaurant.map((restaurant) => (
+                {!selectedRestaurantId && filteredRestaurant.map((restaurant) => (
                     <div key={restaurant.info.id} onClick={() => setSelectedRestaurantId(restaurant.info.id)} className="cursor-pointer transition-transform hover:scale-105 w-full sm:w-auto">
                         <RestaurantCard resData={restaurant.info} />
                     </div>
